@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shadow (Tengyang Deng) — AI Researcher</title>
+<meta name="description" content="CS PhD student at JHU. Research in LLM reasoning, Theory of Mind, and cognitive science-inspired AI.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0A0E1A;
+    --bg2: #111827;
+    --bg3: #1a2235;
+    --cyan: #6EE7F7;
+    --purple: #A78BFA;
+    --text: #E8EDF5;
+    --text2: #8B9CC0;
+    --text3: #4A5570;
+    --border: rgba(110,231,247,0.12);
+    --border2: rgba(110,231,247,0.25);
+    --nav-w: 240px;
+    --font-display: 'Space Grotesk', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ─── SIDEBAR NAV ─── */
+  .sidebar {
+    position: fixed;
+    left: 0; top: 0;
+    width: var(--nav-w);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding: 2.5rem 1.75rem;
+    border-right: 1px solid var(--border);
+    z-index: 100;
+    background: rgba(10,14,26,0.85);
+    backdrop-filter: blur(12px);
+  }
+
+  .sidebar-logo {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.02em;
+    margin-bottom: 0.25rem;
+  }
+
+  .sidebar-sub {
+    font-size: 0.72rem;
+    color: var(--text2);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 2.5rem;
+  }
+
+  .nav-links { list-style: none; flex: 1; }
+  .nav-links li { margin-bottom: 0.25rem; }
+
+  .nav-links a {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.45rem 0.75rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text2);
+    text-decoration: none;
+    transition: all 0.2s ease;
+    letter-spacing: 0.01em;
+  }
+
+  .nav-links a:hover, .nav-links a.active {
+    color: var(--cyan);
+    background: rgba(110,231,247,0.07);
+  }
+
+  .nav-links a .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--text3);
+    flex-shrink: 0;
+    transition: background 0.2s;
+  }
+
+  .nav-links a:hover .dot,
+  .nav-links a.active .dot {
+    background: var(--cyan);
+    box-shadow: 0 0 8px var(--cyan);
+  }
+
+  .sidebar-footer {
+    border-top: 1px solid var(--border);
+    padding-top: 1.25rem;
+  }
+
+  .social-links {
+    display: flex;
+    gap: 0.75rem;
+  }
+
+  .social-links a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    border: 1px solid var(--border2);
+    color: var(--text2);
+    text-decoration: none;
+    font-size: 0.75rem;
+    font-family: var(--font-mono);
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+
+  .social-links a:hover {
+    color: var(--cyan);
+    border-color: var(--cyan);
+    background: rgba(110,231,247,0.07);
+  }
+
+  /* ─── MAIN CONTENT ─── */
+  .main {
+    margin-left: var(--nav-w);
+    min-height: 100vh;
+  }
+
+  section {
+    min-height: 100vh;
+    padding: 5rem 4rem 4rem;
+    max-width: 860px;
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  section.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ─── HERO / ABOUT ─── */
+  #hero {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+    padding-top: 0;
+    min-height: 100vh;
+    max-width: none;
+  }
+
+  #particle-canvas {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    opacity: 0.45;
+    pointer-events: none;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 1;
+    padding: 5rem 4rem;
+    max-width: 860px;
+  }
+
+  .hero-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--cyan);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .hero-eyebrow::before {
+    content: '';
+    display: block;
+    width: 32px;
+    height: 1px;
+    background: var(--cyan);
+  }
+
+  .hero-name {
+    font-family: var(--font-display);
+    font-size: clamp(2.8rem, 6vw, 4.5rem);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    color: var(--text);
+    margin-bottom: 0.75rem;
+  }
+
+  .hero-name .aka {
+    color: var(--text2);
+    font-weight: 400;
+    font-size: 0.55em;
+  }
+
+  .hero-tagline {
+    font-family: var(--font-display);
+    font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+    font-weight: 400;
+    color: var(--purple);
+    margin-bottom: 1.75rem;
+    line-height: 1.4;
+  }
+
+  .hero-bio {
+    font-size: 1rem;
+    color: var(--text2);
+    max-width: 560px;
+    line-height: 1.8;
+    margin-bottom: 2.5rem;
+  }
+
+  .hero-bio strong {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .hero-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .tag {
+    font-size: 0.75rem;
+    font-family: var(--font-mono);
+    padding: 0.3rem 0.75rem;
+    border-radius: 20px;
+    border: 1px solid var(--border2);
+    color: var(--text2);
+    letter-spacing: 0.02em;
+  }
+
+  .tag.cyan { border-color: rgba(110,231,247,0.4); color: var(--cyan); }
+  .tag.purple { border-color: rgba(167,139,250,0.4); color: var(--purple); }
+
+  .hero-cta {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.65rem 1.4rem;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+    cursor: pointer;
+    font-family: var(--font-body);
+    border: none;
+  }
+
+  .btn-primary {
+    background: var(--cyan);
+    color: #0A0E1A;
+  }
+
+  .btn-primary:hover {
+    background: #9ff7ff;
+    transform: translateY(-1px);
+  }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border2);
+  }
+
+  .btn-outline:hover {
+    border-color: var(--cyan);
+    color: var(--cyan);
+    background: rgba(110,231,247,0.05);
+  }
+
+  /* ─── SECTION HEADERS ─── */
+  .section-header {
+    margin-bottom: 3rem;
+  }
+
+  .section-label {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--cyan);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .section-label::before {
+    content: '';
+    display: block;
+    width: 24px;
+    height: 1px;
+    background: var(--cyan);
+  }
+
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: var(--text);
+    line-height: 1.1;
+  }
+
+  /* ─── RESEARCH ─── */
+  .paper-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem 1.75rem;
+    margin-bottom: 1.25rem;
+    transition: border-color 0.2s, transform 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .paper-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px;
+    height: 100%;
+    background: linear-gradient(180deg, var(--cyan), var(--purple));
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .paper-card:hover {
+    border-color: var(--border2);
+    transform: translateX(4px);
+  }
+
+  .paper-card:hover::before { opacity: 1; }
+
+  .paper-title {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.4rem;
+    line-height: 1.4;
+  }
+
+  .paper-authors {
+    font-size: 0.82rem;
+    color: var(--text2);
+    margin-bottom: 0.5rem;
+  }
+
+  .paper-authors .me { color: var(--cyan); }
+
+  .paper-venue {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    background: rgba(167,139,250,0.1);
+    color: var(--purple);
+    margin-bottom: 0.75rem;
+  }
+
+  .paper-abstract {
+    font-size: 0.875rem;
+    color: var(--text2);
+    line-height: 1.7;
+    margin-bottom: 0.75rem;
+  }
+
+  .paper-links {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .paper-link {
+    font-size: 0.78rem;
+    font-family: var(--font-mono);
+    color: var(--text2);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    transition: color 0.2s;
+  }
+
+  .paper-link:hover { color: var(--cyan); }
+  .paper-link svg { width: 12px; height: 12px; }
+
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    padding: 0.15rem 0.55rem;
+    border-radius: 4px;
+    margin-left: 0.75rem;
+    vertical-align: middle;
+  }
+
+  .status-wip {
+    background: rgba(110,231,247,0.1);
+    color: var(--cyan);
+    border: 1px solid rgba(110,231,247,0.25);
+  }
+
+  .status-wip::before {
+    content: '';
+    display: block;
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--cyan);
+    animation: pulse 1.5s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  /* ─── PROJECTS ─── */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .project-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+
+  .project-card:hover {
+    border-color: var(--border2);
+    background: var(--bg3);
+    transform: translateY(-3px);
+  }
+
+  .project-icon {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    background: rgba(110,231,247,0.1);
+    border: 1px solid rgba(110,231,247,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+  }
+
+  .project-name {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+  }
+
+  .project-desc {
+    font-size: 0.85rem;
+    color: var(--text2);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
+
+  .project-tags {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+  }
+
+  .project-tag {
+    font-size: 0.68rem;
+    font-family: var(--font-mono);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    background: rgba(167,139,250,0.08);
+    color: var(--purple);
+    border: 1px solid rgba(167,139,250,0.2);
+  }
+
+  /* ─── BLOG ─── */
+  .blog-list { display: flex; flex-direction: column; gap: 0; }
+
+  .blog-item {
+    display: flex;
+    align-items: baseline;
+    gap: 1.5rem;
+    padding: 1.25rem 0;
+    border-bottom: 1px solid var(--border);
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.2s;
+    position: relative;
+  }
+
+  .blog-item:hover .blog-title { color: var(--cyan); }
+  .blog-item:hover .blog-arrow { opacity: 1; transform: translateX(0); }
+
+  .blog-date {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--text3);
+    min-width: 90px;
+    flex-shrink: 0;
+  }
+
+  .blog-title {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text);
+    transition: color 0.2s;
+    flex: 1;
+    line-height: 1.4;
+  }
+
+  .blog-tag {
+    font-size: 0.68rem;
+    font-family: var(--font-mono);
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    background: rgba(110,231,247,0.08);
+    color: var(--text2);
+    flex-shrink: 0;
+  }
+
+  .blog-arrow {
+    color: var(--cyan);
+    opacity: 0;
+    transform: translateX(-8px);
+    transition: all 0.2s;
+    font-size: 0.9rem;
+  }
+
+  /* ─── CV ─── */
+  .cv-section { margin-bottom: 2.5rem; }
+
+  .cv-section-title {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--cyan);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .cv-item {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.25rem 1rem;
+    margin-bottom: 1.25rem;
+    align-items: start;
+  }
+
+  .cv-role {
+    font-weight: 500;
+    font-size: 0.95rem;
+    color: var(--text);
+  }
+
+  .cv-org {
+    font-size: 0.85rem;
+    color: var(--cyan);
+  }
+
+  .cv-date {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--text3);
+    text-align: right;
+    white-space: nowrap;
+    grid-row: 1 / 3;
+    grid-column: 2;
+    align-self: start;
+    padding-top: 3px;
+  }
+
+  .cv-desc {
+    font-size: 0.82rem;
+    color: var(--text2);
+    line-height: 1.6;
+    grid-column: 1;
+  }
+
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+  }
+
+  .skill-category { }
+
+  .skill-cat-name {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.4rem;
+  }
+
+  .skill-items {
+    font-size: 0.78rem;
+    color: var(--text2);
+    line-height: 1.6;
+  }
+
+  .cv-download-banner {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    padding: 1.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .cv-download-text h3 {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+  }
+
+  .cv-download-text p {
+    font-size: 0.82rem;
+    color: var(--text2);
+  }
+
+  /* ─── CONTACT ─── */
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem 3rem;
+    margin-bottom: 3rem;
+  }
+
+  .contact-item { }
+
+  .contact-label {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--text3);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+  }
+
+  .contact-value {
+    font-size: 0.95rem;
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .contact-value a {
+    color: var(--cyan);
+    text-decoration: none;
+  }
+
+  .contact-value a:hover {
+    text-decoration: underline;
+  }
+
+  .contact-note {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--purple);
+    border-radius: 0 12px 12px 0;
+    padding: 1.25rem 1.5rem;
+    font-size: 0.9rem;
+    color: var(--text2);
+    line-height: 1.7;
+    margin-top: 2rem;
+  }
+
+  .contact-note strong {
+    color: var(--purple);
+    font-weight: 500;
+  }
+
+  /* ─── DIVIDER ─── */
+  .section-divider {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border2), transparent);
+    margin: 0 4rem;
+  }
+
+  /* ─── MOBILE ─── */
+  .mobile-menu-btn {
+    display: none;
+    position: fixed;
+    top: 1rem; left: 1rem;
+    z-index: 200;
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    padding: 0.5rem;
+    cursor: pointer;
+    color: var(--text);
+    flex-direction: column;
+    gap: 4px;
+    width: 38px; height: 38px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .mobile-menu-btn span {
+    display: block;
+    width: 18px;
+    height: 1.5px;
+    background: var(--text);
+    border-radius: 2px;
+    transition: all 0.2s;
+  }
+
+  @media (max-width: 768px) {
+    :root { --nav-w: 0px; }
+
+    .sidebar {
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+      width: 240px;
+    }
+
+    .sidebar.open { transform: translateX(0); }
+    .main { margin-left: 0; }
+    .mobile-menu-btn { display: flex; }
+
+    section { padding: 5rem 1.5rem 3rem; }
+    .hero-content { padding: 5rem 1.5rem; }
+
+    .projects-grid { grid-template-columns: 1fr; }
+    .contact-grid { grid-template-columns: 1fr; }
+
+    .blog-date { display: none; }
+    .cv-item { grid-template-columns: 1fr; }
+    .cv-date { grid-row: auto; grid-column: auto; text-align: left; margin-bottom: 0.25rem; }
+    .cv-download-banner { flex-direction: column; align-items: flex-start; }
+  }
+
+  /* ─── SCROLLBAR ─── */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--text3); border-radius: 2px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text2); }
+
+  /* ─── REDUCED MOTION ─── */
+  @media (prefers-reduced-motion: reduce) {
+    section { transition: none; opacity: 1; transform: none; }
+    * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Mobile toggle -->
+<button class="mobile-menu-btn" onclick="toggleSidebar()" aria-label="Toggle navigation">
+  <span></span><span></span><span></span>
+</button>
+
+<!-- Sidebar -->
+<nav class="sidebar" id="sidebar" aria-label="Main navigation">
+  <div class="sidebar-logo">Shadow Deng</div>
+  <div class="sidebar-sub">AI Researcher</div>
+
+  <ul class="nav-links">
+    <li><a href="#hero" class="active"><span class="dot"></span>About</a></li>
+    <li><a href="#research"><span class="dot"></span>Research</a></li>
+    <li><a href="#projects"><span class="dot"></span>Projects</a></li>
+    <li><a href="#blog"><span class="dot"></span>Blog</a></li>
+    <li><a href="#cv"><span class="dot"></span>CV</a></li>
+    <li><a href="#contact"><span class="dot"></span>Contact</a></li>
+  </ul>
+
+  <div class="sidebar-footer">
+    <div class="social-links">
+      <a href="https://github.com/tengyang-deng" target="_blank" title="GitHub">GH</a>
+      <a href="https://scholar.google.com" target="_blank" title="Google Scholar">GS</a>
+      <a href="https://twitter.com" target="_blank" title="Twitter/X">X</a>
+      <a href="mailto:tdeng3@jhu.edu" title="Email">✉</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<main class="main">
+
+  <!-- ─── HERO / ABOUT ─── -->
+  <section id="hero">
+    <canvas id="particle-canvas" aria-hidden="true"></canvas>
+    <div class="hero-content">
+      <div class="hero-eyebrow">CS PhD Student · Johns Hopkins University</div>
+      <h1 class="hero-name">
+        Tengyang Deng
+        <span class="aka"> / Shadow</span>
+      </h1>
+      <p class="hero-tagline">
+        Teaching machines to understand minds.
+      </p>
+      <p class="hero-bio">
+        I'm a master's student at <strong>JHU SCAI Lab</strong> working toward a PhD in 2027.
+        My research sits at the intersection of <strong>LLM reasoning</strong>,
+        <strong>Theory of Mind</strong>, and <strong>cognitive science-inspired AI</strong> —
+        trying to understand what it really takes for language models to grasp another agent's perspective.
+      </p>
+      <div class="hero-tags">
+        <span class="tag cyan">Theory of Mind</span>
+        <span class="tag cyan">LLM Reasoning</span>
+        <span class="tag purple">PAWM</span>
+        <span class="tag purple">POMDP</span>
+        <span class="tag">Cognitive Science</span>
+        <span class="tag">Multi-Agent</span>
+      </div>
+      <div class="hero-cta">
+        <a href="#research" class="btn btn-primary">View Research →</a>
+        <a href="#cv" class="btn btn-outline">Download CV</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ─── RESEARCH ─── -->
+  <section id="research">
+    <div class="section-header">
+      <div class="section-label">Research</div>
+      <h2 class="section-title">Publications & Work</h2>
+    </div>
+
+    <div class="paper-card">
+      <div class="paper-title">
+        PAWM: Perspective-Aware World Modeling for False-Belief Inference in Language Models
+        <span class="status-badge status-wip">in progress</span>
+      </div>
+      <div class="paper-authors">
+        <span class="me">Tengyang Deng</span>
+      </div>
+      <div class="paper-venue">⬡ Target: ACL 2026 Workshop / COLM 2026</div>
+      <p class="paper-abstract">
+        Large language models consistently fail on false-belief tasks not due to reasoning deficits, but because they adopt a global narrator perspective during information extraction. PAWM introduces per-agent perspective-specific belief states within a POMDP framework, restructuring how models track what each agent knows and when they knew it.
+      </p>
+      <div class="paper-links">
+        <a href="#" class="paper-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Paper (soon)
+        </a>
+        <a href="https://github.com/tengyang-deng" class="paper-link" target="_blank">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+          Code (soon)
+        </a>
+      </div>
+    </div>
+
+    <div class="paper-card">
+      <div class="paper-title">
+        Curriculum Learning for Double DQN in Sparse-Reward Environments
+      </div>
+      <div class="paper-authors">
+        <span class="me">Tengyang Deng</span>
+      </div>
+      <div class="paper-venue">⬡ JHU EN.520.637 — Foundations of Reinforcement Learning</div>
+      <p class="paper-abstract">
+        A controlled study of curriculum learning applied to Double DQN in the Flappy Bird sparse-reward environment. Key finding: DQN ≥ DDQN across all conditions; curriculum learning improved sample efficiency for vanilla DQN (reaching score 10 earliest) while paradoxically hurting DDQN performance.
+      </p>
+      <div class="paper-links">
+        <a href="#" class="paper-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Report
+        </a>
+      </div>
+    </div>
+
+    <div class="paper-card">
+      <div class="paper-title">
+        Proactive Interference in Large Language Models: A Cognitive Science Perspective
+        <span class="status-badge status-wip">proposal</span>
+      </div>
+      <div class="paper-authors">
+        <span class="me">Tengyang Deng</span>
+      </div>
+      <div class="paper-venue">⬡ JHU 601.773 — Machine Social Intelligence</div>
+      <p class="paper-abstract">
+        Project proposal exploring whether LLMs exhibit proactive interference — the phenomenon where earlier learned information disrupts retrieval of newer information — connecting memory psychology to in-context learning dynamics.
+      </p>
+      <div class="paper-links">
+        <a href="#" class="paper-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Proposal
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ─── PROJECTS ─── -->
+  <section id="projects">
+    <div class="section-header">
+      <div class="section-label">Projects</div>
+      <h2 class="section-title">Things I've Built</h2>
+    </div>
+
+    <div class="projects-grid">
+      <a href="#" class="project-card">
+        <div class="project-icon">🧠</div>
+        <div class="project-name">PAWM</div>
+        <p class="project-desc">Perspective-Aware World Model — restructuring how LLMs track per-agent belief states in false-belief scenarios using a POMDP framework.</p>
+        <div class="project-tags">
+          <span class="project-tag">Python</span>
+          <span class="project-tag">ToM</span>
+          <span class="project-tag">LLM</span>
+        </div>
+      </a>
+
+      <a href="#" class="project-card">
+        <div class="project-icon">🎮</div>
+        <div class="project-name">Curriculum DQN</div>
+        <p class="project-desc">Curriculum learning strategies for Double DQN in sparse-reward Flappy Bird. Training on RTX 3070 across 4 ablation conditions.</p>
+        <div class="project-tags">
+          <span class="project-tag">PyTorch</span>
+          <span class="project-tag">RL</span>
+          <span class="project-tag">DQN</span>
+        </div>
+      </a>
+
+      <a href="#" class="project-card">
+        <div class="project-icon">🤖</div>
+        <div class="project-name">Desktop Companion Agent</div>
+        <p class="project-desc">A screen-aware AI companion with ToM inference and multi-layer memory — connecting real-time perception to belief modeling.</p>
+        <div class="project-tags">
+          <span class="project-tag">Agent</span>
+          <span class="project-tag">Vision</span>
+          <span class="project-tag">Memory</span>
+        </div>
+      </a>
+
+      <a href="#" class="project-card">
+        <div class="project-icon">⚙️</div>
+        <div class="project-name">LoRR 2026 (exploring)</div>
+        <p class="project-desc">LLM-assisted approach to the League of Robot Runners 2026 multi-agent pathfinding competition — connecting to PAWM's per-agent belief work.</p>
+        <div class="project-tags">
+          <span class="project-tag">MAPF</span>
+          <span class="project-tag">LLM</span>
+          <span class="project-tag">Multi-Agent</span>
+        </div>
+      </a>
+
+      <a href="#" class="project-card">
+        <div class="project-icon">🗃️</div>
+        <div class="project-name">Distributed DB Design</div>
+        <p class="project-desc">Vertical fragmentation, Bond Energy Algorithm, and formal correctness proofs for distributed database schema design.</p>
+        <div class="project-tags">
+          <span class="project-tag">SQL</span>
+          <span class="project-tag">Database</span>
+          <span class="project-tag">LaTeX</span>
+        </div>
+      </a>
+
+      <a href="https://github.com/tengyang-deng" target="_blank" class="project-card" style="border-style: dashed; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 0.5rem; min-height: 180px;">
+        <div style="font-size: 1.5rem; opacity: 0.4;">+</div>
+        <div style="font-size: 0.82rem; color: var(--text2);">More on GitHub →</div>
+      </a>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ─── BLOG ─── -->
+  <section id="blog">
+    <div class="section-header">
+      <div class="section-label">Writing</div>
+      <h2 class="section-title">Notes & Essays</h2>
+    </div>
+
+    <div class="blog-list">
+      <a href="#" class="blog-item">
+        <span class="blog-date">2025 · Jun</span>
+        <span class="blog-title">Why LLMs Fail at False-Belief Tasks: It's Not the Reasoning</span>
+        <span class="blog-tag">Research</span>
+        <span class="blog-arrow">→</span>
+      </a>
+      <a href="#" class="blog-item">
+        <span class="blog-date">2025 · May</span>
+        <span class="blog-title">The Looking-Glass Self and Second-Order Theory of Mind in AI</span>
+        <span class="blog-tag">Essay</span>
+        <span class="blog-arrow">→</span>
+      </a>
+      <a href="#" class="blog-item">
+        <span class="blog-date">2025 · Apr</span>
+        <span class="blog-title">Curriculum Learning Backfired on My DDQN — Here's Why</span>
+        <span class="blog-tag">RL</span>
+        <span class="blog-arrow">→</span>
+      </a>
+      <a href="#" class="blog-item">
+        <span class="blog-date">2025 · Mar</span>
+        <span class="blog-title">Recursive Bayesian Belief Updates in Kleiman-Weiner 2025: A Close Reading</span>
+        <span class="blog-tag">Paper Notes</span>
+        <span class="blog-arrow">→</span>
+      </a>
+      <a href="#" class="blog-item">
+        <span class="blog-date">2025 · Feb</span>
+        <span class="blog-title">Building AI That Thinks Like Humans: Neuroscience Correspondences</span>
+        <span class="blog-tag">Essay</span>
+        <span class="blog-arrow">→</span>
+      </a>
+    </div>
+
+    <p style="margin-top: 2rem; font-size: 0.82rem; color: var(--text3); font-family: var(--font-mono);">
+      <!-- Replace with your actual blog link when ready -->
+      More posts coming soon. Subscribe via RSS.
+    </p>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ─── CV ─── -->
+  <section id="cv">
+    <div class="section-header">
+      <div class="section-label">Curriculum Vitae</div>
+      <h2 class="section-title">Experience & Education</h2>
+    </div>
+
+    <div class="cv-download-banner">
+      <div class="cv-download-text">
+        <h3>Full CV</h3>
+        <p>Updated June 2025 · PDF, 2 pages</p>
+      </div>
+      <a href="cv.pdf" class="btn btn-primary" download>↓ Download PDF</a>
+    </div>
+
+    <div style="height: 2.5rem;"></div>
+
+    <div class="cv-section">
+      <div class="cv-section-title">Education</div>
+      <div class="cv-item">
+        <div class="cv-role">M.S. / PhD Track, Computer Science</div>
+        <div class="cv-date">2024 — present</div>
+        <div class="cv-org">Johns Hopkins University</div>
+        <div class="cv-desc">SCAI Lab · Advisor: TBD (hands-off) · Research focus: LLM reasoning, Theory of Mind, cognitive science-inspired AI</div>
+      </div>
+    </div>
+
+    <div class="cv-section">
+      <div class="cv-section-title">Research</div>
+      <div class="cv-item">
+        <div class="cv-role">Research Project — PAWM</div>
+        <div class="cv-date">2025 — present</div>
+        <div class="cv-org">JHU SCAI Lab</div>
+        <div class="cv-desc">Perspective-Aware Belief State Modeling for false-belief inference. Full BigToM evaluation pipeline, caching bug fixes in AutoToM, 3×3 factorial study design.</div>
+      </div>
+      <div class="cv-item">
+        <div class="cv-role">Research Collaboration — DTS Project</div>
+        <div class="cv-date">2024</div>
+        <div class="cv-org">JHU CLSP Cluster</div>
+        <div class="cv-desc">Decoding Tree Sketching experiments on A100 GPUs under Vladimir Braverman.</div>
+      </div>
+    </div>
+
+    <div class="cv-section">
+      <div class="cv-section-title">Selected Coursework</div>
+      <div class="cv-item">
+        <div class="cv-role">Machine Social Intelligence (601.773)</div>
+        <div class="cv-date">Spring 2025</div>
+        <div class="cv-org">Johns Hopkins</div>
+      </div>
+      <div class="cv-item">
+        <div class="cv-role">Foundations of Reinforcement Learning (EN.520.637)</div>
+        <div class="cv-date">Spring 2025</div>
+        <div class="cv-org">Johns Hopkins</div>
+      </div>
+      <div class="cv-item">
+        <div class="cv-role">Graduate Database Systems (605.741)</div>
+        <div class="cv-date">2025</div>
+        <div class="cv-org">Johns Hopkins</div>
+      </div>
+    </div>
+
+    <div class="cv-section">
+      <div class="cv-section-title">Skills</div>
+      <div class="skills-grid">
+        <div class="skill-category">
+          <div class="skill-cat-name">Languages</div>
+          <div class="skill-items">Python · SQL · LaTeX · JavaScript</div>
+        </div>
+        <div class="skill-category">
+          <div class="skill-cat-name">ML / AI</div>
+          <div class="skill-items">PyTorch · HuggingFace · LLM APIs · RL (DQN, PPO)</div>
+        </div>
+        <div class="skill-category">
+          <div class="skill-cat-name">Infrastructure</div>
+          <div class="skill-items">SLURM · A100/GPU clusters · Git · Linux</div>
+        </div>
+        <div class="skill-category">
+          <div class="skill-cat-name">Languages (spoken)</div>
+          <div class="skill-items">Chinese (native) · English (fluent)</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ─── CONTACT ─── -->
+  <section id="contact">
+    <div class="section-header">
+      <div class="section-label">Contact</div>
+      <h2 class="section-title">Get in Touch</h2>
+    </div>
+
+    <div class="contact-grid">
+      <div class="contact-item">
+        <div class="contact-label">Email</div>
+        <div class="contact-value"><a href="mailto:tdeng3@jhu.edu">tdeng3@jhu.edu</a></div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-label">Institution</div>
+        <div class="contact-value">Johns Hopkins University<br><span style="font-size:0.82rem; color: var(--text2);">Baltimore, MD</span></div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-label">GitHub</div>
+        <div class="contact-value"><a href="https://github.com/tengyang-deng" target="_blank">@tengyang-deng</a></div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-label">Twitter / X</div>
+        <div class="contact-value"><a href="https://twitter.com" target="_blank">@ShadowDeng</a></div>
+      </div>
+    </div>
+
+    <div class="contact-note">
+      <strong>Research collaboration, feedback on PAWM, or just want to chat about ToM?</strong><br>
+      I'm always happy to hear from fellow researchers. Response time is usually within a few days.
+      For PhD-related inquiries or potential advisor connections, please include your background and area of interest.
+    </div>
+
+    <p style="margin-top: 3rem; font-size: 0.75rem; color: var(--text3); font-family: var(--font-mono);">
+      Built with vanilla HTML/CSS/JS · Hosted on GitHub Pages · © 2025 Tengyang Deng
+    </p>
+  </section>
+
+</main>
+
+<script>
+// ─── PARTICLE CANVAS ───
+(function() {
+  const canvas = document.getElementById('particle-canvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, nodes, animId;
+
+  const CYAN = '#6EE7F7';
+  const PURPLE = '#A78BFA';
+  const N_NODES = 55;
+  const CONNECT_DIST = 160;
+  const PULSE_SPEED = 0.008;
+
+  function resize() {
+    W = canvas.offsetWidth;
+    H = canvas.offsetHeight;
+    canvas.width = W;
+    canvas.height = H;
+  }
+
+  function initNodes() {
+    nodes = Array.from({ length: N_NODES }, (_, i) => ({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      vx: (Math.random() - 0.5) * 0.4,
+      vy: (Math.random() - 0.5) * 0.4,
+      r: Math.random() * 2 + 1.2,
+      color: Math.random() > 0.5 ? CYAN : PURPLE,
+      phase: Math.random() * Math.PI * 2,
+    }));
+  }
+
+  function drawFrame(t) {
+    ctx.clearRect(0, 0, W, H);
+
+    // Update
+    nodes.forEach(n => {
+      n.x += n.vx;
+      n.y += n.vy;
+      if (n.x < 0 || n.x > W) n.vx *= -1;
+      if (n.y < 0 || n.y > H) n.vy *= -1;
+      n.phase += PULSE_SPEED;
+    });
+
+    // Edges
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        const dx = nodes[i].x - nodes[j].x;
+        const dy = nodes[i].y - nodes[j].y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < CONNECT_DIST) {
+          const alpha = (1 - dist / CONNECT_DIST) * 0.35;
+          ctx.beginPath();
+          ctx.moveTo(nodes[i].x, nodes[i].y);
+          ctx.lineTo(nodes[j].x, nodes[j].y);
+          ctx.strokeStyle = `rgba(110,231,247,${alpha})`;
+          ctx.lineWidth = 0.8;
+          ctx.stroke();
+        }
+      }
+    }
+
+    // Nodes
+    nodes.forEach(n => {
+      const pulse = 0.6 + 0.4 * Math.sin(n.phase);
+      const r = n.r * pulse;
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, r, 0, Math.PI * 2);
+      ctx.fillStyle = n.color;
+      ctx.globalAlpha = pulse * 0.85;
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    });
+
+    animId = requestAnimationFrame(drawFrame);
+  }
+
+  window.addEventListener('resize', () => {
+    resize();
+    initNodes();
+  });
+
+  resize();
+  initNodes();
+  requestAnimationFrame(drawFrame);
+})();
+
+// ─── SCROLL SPY ───
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-links a');
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      navLinks.forEach(a => a.classList.remove('active'));
+      const link = document.querySelector(`.nav-links a[href="#${entry.target.id}"]`);
+      if (link) link.classList.add('active');
+    }
+  });
+}, { threshold: 0.35, rootMargin: '-10% 0px -40% 0px' });
+
+sections.forEach(s => observer.observe(s));
+
+// ─── SCROLL REVEAL ───
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.08 });
+
+document.querySelectorAll('section').forEach(s => revealObserver.observe(s));
+
+// ─── MOBILE MENU ───
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+// Close on link click (mobile)
+navLinks.forEach(a => {
+  a.addEventListener('click', () => {
+    document.getElementById('sidebar').classList.remove('open');
+  });
+});
+
+// Hero visible immediately
+document.querySelector('#hero').classList.add('visible');
+</script>
+
+</body>
+</html>
